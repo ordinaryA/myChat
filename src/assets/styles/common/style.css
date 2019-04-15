@@ -1,0 +1,52 @@
+.mu-expansion-panel-actions {
+  padding: 5px 0;
+}
+
+.mu-expansion-panel {
+  border-bottom: 1px solid #d5d5d5 !important;
+  border-top: 1px solid #d5d5d5 !important;
+  margin: -1px;
+}
+
+.mu-expansion-panel__expand {
+  margin: 10px 0;
+}
+
+.com_layout {
+  padding-top: 60px;
+}
+
+.com_header {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  text-align: center;
+}
+
+.border_box {
+  border-top: 1px solid #d5d5d5;
+  border-bottom: 1px solid #d5d5d5;
+  margin-top: 10px;
+  background: #fff;
+  padding: 20px 0;
+}
+
+.h80 {
+  min-height: 80vh;
+}
+
+.fl {
+  float: left;
+}
+
+.fr {
+  float: right;
+}
+
+.text_center {
+  text-align: center;
+}
+
+.icon{
+  font-size: 22px;
+}

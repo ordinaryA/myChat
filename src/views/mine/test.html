@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  const gobal = {
+    bool_1: false,
+    bool_2: false,
+    bool_3: false,
+  }
+
+  input1.onblur = val => {
+    const res = /^[a-zA-Z0-9]{4,16}$/.test(val)
+    if (res) {
+      gobal.bool_1 = true;
+    }
+  }
+  input2.onblur = val => {
+    const res = /^[a-zA-Z0-9]{4,16}$/.test(val)
+    if (res) {
+      gobal.bool_1 = true;
+    }
+  }
+  input3.onblur = val => {
+    const res = /^[a-zA-Z0-9]{4,16}$/.test(val)
+    if (res) {
+      gobal.bool_1 = true;
+    }
+  }
+
+  submit.onclick = () => {
+      if(gobal.bool_1&&gobal.bool_2&&gobal.bool_3){
+        ajax()
+      }
+  }
+
+</script>
+
+</html>

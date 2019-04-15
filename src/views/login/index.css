@@ -1,0 +1,23 @@
+.layout {
+    width: 100vw;
+    height: 100vh;
+    background: url("../../../static/background/bg_1.png") no-repeat;
+    background-size: 110%;
+    background-position: top center;
+}
+.register {
+    width: 80vw;
+    margin: 0 auto;
+    padding-top: 200px;
+}
+.form_sm_button {
+    width: 43%;
+}
+.form_button {
+    width: 80vw;
+    margin: 30px auto 0;
+    border: 1px solid #333;
+}
+.mu-form-item__focus {
+    color: #000;
+}
