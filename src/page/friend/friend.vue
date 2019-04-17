@@ -235,10 +235,8 @@ export default {
          * @return {Null}
          */
         friendSocket() {
-            SOCKET.on('makeFriend', async socketId => {
-                if (socketId == GET_SESSION('USERID')) {
-                    await DISPATCH('GETFRIENDLIST')
-                }
+            SOCKET.on('makeFriend', async _ => {
+                await DISPATCH('GETFRIENDLIST')
             });
         },
 
@@ -298,7 +296,7 @@ export default {
             } else {
                 this.$toast.error(msg);
             }
-            SOCKET.emit('makeFriend', applyId);
+            SOCKET.emit('makeFriend');
         },
 
         /**

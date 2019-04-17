@@ -32,6 +32,10 @@
             </div>
             <mu-sub-header>好友聊天</mu-sub-header>
             <div
+                v-if="chatList.length == 0"
+                class="have_not_friend"
+            >暂无好友，请到通讯录页面添加好友♪(＾∀＾●)ﾉ</div>
+            <div
                 v-for="i in chatList"
                 :key="i.id"
             >
@@ -154,4 +158,9 @@ export default {
 </script>
 
 <style scoped>
+.have_not_friend {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
 </style>
