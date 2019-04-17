@@ -43,9 +43,10 @@ const service = [
   'getChatList',
   //获取两个用户之间的聊天记录
   'getPrivateChat',
-  // 待处理......
   //发送私聊信息
   'sendPrivateChat',
+  // 待处理......
+  'userBecomeOnline',
 ]
 
 service.map(i => _http[i] = data => req.post(url('/' + i), RESDATA(data)));

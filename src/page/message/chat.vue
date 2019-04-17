@@ -48,11 +48,14 @@
                     </mu-list-item-action>
                     <mu-list-item-content>
                         <mu-list-item-title>{{i.nickname}}</mu-list-item-title>
-                        <mu-list-item-sub-title>{{i.message}}</mu-list-item-sub-title>
+                        <mu-list-item-sub-title>{{i.last_chat}}</mu-list-item-sub-title>
                     </mu-list-item-content>
-                    <mu-list-item-action>
-                        <mu-list-item-after-text>15 min</mu-list-item-after-text>
-                        <mu-list-item-after-text></mu-list-item-after-text>
+                    <mu-list-item-action v-if="i.unread != 0">
+                        <mu-badge
+                            :content="String(i.unread)"
+                            color="secondary"
+                            circle
+                        ></mu-badge>
                     </mu-list-item-action>
                 </mu-list-item>
                 <mu-divider inset />
@@ -65,6 +68,7 @@
 import { mapState } from 'vuex'
 import { DEL_LOGO, COMMIT, GET_SESSION, PUSH, DISPATCH, SET_SESSION } from '../../utils'
 import _http from '../../http';
+import SOCKET from '../../utils/socket.js'
 export default {
     data() {
         return {
@@ -81,7 +85,11 @@ export default {
         };
     },
     created() {
-        this.init()
+        this.init();
+        this.buildSocket();
+    },
+    mounted() {
+        this.initBind();
     },
     methods: {
         /**
@@ -102,6 +110,33 @@ export default {
                 return
             }
         },
+
+        /**
+         * DOM树构建完后绑定事件
+         * @param {null}
+         * @return {null}
+         */
+        async initBind() {
+
+        },
+
+        /**
+         * 建立SOCKET链接
+         * @param {null}
+         * @return {null}
+         */
+        buildSocket() {
+            SOCKET.on('Update_Private_Chat', async socketInfo => {
+                const userId = JSON.parse(GET_SESSION('USERID'))
+                if (userId == socketInfo.another_id) {
+                    const { data } = await _http.getChatList();
+                    if (data.code == 1) {
+                        this.chatList = data.chatList;
+                    }
+                }
+            });
+        },
+
         /**
          * 点击消息列表进入聊天
          * @param {Object}

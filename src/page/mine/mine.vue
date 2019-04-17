@@ -99,7 +99,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { COMMIT, DISPATCH } from '../../utils'
+import { COMMIT, DISPATCH, GET_SESSION } from '../../utils'
 import _http from '../../http';
 import SOCKET from '../../utils/socket.js'
 
@@ -194,12 +194,12 @@ export default {
          * @return {Null}
          */
         buildSocket() {
-            SOCKET.on('setUserInfo', async bool => {
-                if (!bool) {
-                    return
+            SOCKET.on('setUserInfo', async socketId => {
+                const Self_Id = GET_SESSION('USERID');
+                if (Self_Id == socketId) {
+                    const { data } = await _http.getUserInfo();
+                    COMMIT('setUserInfo', data.userInfo);
                 }
-                const { data } = await _http.getUserInfo();
-                COMMIT('setUserInfo', data.userInfo);
             });
         },
 
@@ -267,7 +267,7 @@ export default {
                 const { data } = await _http.changeNickname({ nickname: value });
                 const { code, msg } = data;
                 if (code === 1) {
-                    SOCKET.emit('setUserInfo', true);
+                    SOCKET.emit('setUserInfo', GET_SESSION('USERID'));
                     this.$toast.success(msg)
                 } else {
                     this.$toast.error(msg)

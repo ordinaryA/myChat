@@ -78,7 +78,6 @@ import { COMMIT, PUSH, GET_SESSION, TRIM } from '../../utils';
 import { recentDate } from '../../utils/date.js'
 import _http from '../../http';
 import SOCKET from '../../utils/socket.js'
-
 export default {
     data() {
         return {
@@ -103,7 +102,9 @@ export default {
          */
         async init() {
             COMMIT('setBottom', false);
-            this.anotherInfo = JSON.parse(GET_SESSION('ANOTHER_USER_INFO'))
+            const ANOTHER_USER_INFO = GET_SESSION('ANOTHER_USER_INFO');
+            this.anotherInfo = JSON.parse(ANOTHER_USER_INFO);
+            _http.userBecomeOnline({ ...this.anotherInfo, type: 'online' }) //异步更改用户在线状态
             const { data } = await _http.getPrivateChat({ ...this.anotherInfo, page: this.page });
             const { code, chat } = data;
             if (code === 1) {
@@ -169,6 +170,7 @@ export default {
             if (code === 1) {
                 this.willChat = '';
                 SOCKET.emit("Send_Private_Chat_Success", this.anotherInfo);
+                SOCKET.emit("Send_Private_Chat_Get_Message_List", this.anotherInfo);
             } else {
                 this.$toast.error(msg);
                 return
@@ -225,9 +227,9 @@ export default {
             return record;
         }
     },
-    beforeRouteLeave(to, from, next) {
-        const answer = window.confirm('Do you really want to leave? you have unsaved changes!')
-        if (answer) {
+    async beforeRouteLeave(to, from, next) {
+        const { data } = await _http.userBecomeOnline({ ...this.anotherInfo, type: 'exit' })
+        if (data.code === 1) {
             next()
         } else {
             next(false)

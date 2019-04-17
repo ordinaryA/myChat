@@ -235,8 +235,10 @@ export default {
          * @return {Null}
          */
         friendSocket() {
-            SOCKET.on('makeFriend', async () => {
-                await DISPATCH('GETFRIENDLIST')
+            SOCKET.on('makeFriend', async socketId => {
+                if (socketId == GET_SESSION('USERID')) {
+                    await DISPATCH('GETFRIENDLIST')
+                }
             });
         },
 
@@ -284,7 +286,7 @@ export default {
         },
 
         /**
-         * 添加好友
+         * 处理好友请求
          * @param {String,Number}
          * @return {Null}
          */
@@ -296,11 +298,11 @@ export default {
             } else {
                 this.$toast.error(msg);
             }
-            SOCKET.emit('makeFriend');
+            SOCKET.emit('makeFriend', applyId);
         },
 
         /**
-         * 添加好友
+         * 查看好友信息
          * @param {Object,String}
          * @return {Null}
          */
