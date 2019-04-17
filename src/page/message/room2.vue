@@ -1,9 +1,6 @@
 <template>
     <div class="dise">
-        <mu-appbar
-            class="room_bar"
-            :title="title"
-        >
+        <mu-appbar class="room_bar">
             <mu-button
                 icon
                 slot="left"
@@ -11,7 +8,7 @@
             >
                 <mu-icon value=":iconfont icon-back" />
             </mu-button>
-            Room
+            <span class="room_name">{{anotherInfo.nickname}}</span>
             <mu-button
                 icon
                 slot="right"
@@ -25,25 +22,31 @@
             @scroll.passive="loadData()"
         >
             <div
-                class="msg_one cl"
-                v-for="(item,i) in publicChat"
-                :key="i"
-            >
+                v-if="chat.length == 0"
+                class="first_tip"
+            >你们成为好友啦，快开始聊天吧</div>
+            <div v-else>
                 <div
-                    v-if="item.needTime"
-                    class="msg_time"
+                    class="msg_one cl"
+                    v-for="(item,i) in addDateOfChat"
+                    :key="i"
                 >
-                    <span>{{changeDate(item.chatTimestamp,true)}}</span>
-                </div>
-                <mu-avatar :class="item.isSelf ? 'self_avatar' : 'other_avatar'">
-                    <img
-                        :src="`./static/avatar/${item.avatar}`"
-                        alt=""
+                    <div
+                        v-if="item.needTime"
+                        class="msg_time"
                     >
-                </mu-avatar>
-                <div>
-                    <div :class="item.isSelf ? 'self_title' : 'other_title'">{{item.nickname}}</div>
-                    <div :class="item.isSelf ? 'self_msg' : 'other_msg'">{{item.chatMessage}}</div>
+                        <span>{{changeDate(item.chatTimestamp,true)}}</span>
+                    </div>
+                    <mu-avatar :class="item.isSelf ? 'self_avatar' : 'other_avatar'">
+                        <img
+                            :src="`./static/avatar/${item.avatar}`"
+                            alt=""
+                        >
+                    </mu-avatar>
+                    <div>
+                        <div :class="item.isSelf ? 'self_title' : 'other_title'">{{item.nickname}}</div>
+                        <div :class="item.isSelf ? 'self_msg' : 'other_msg'">{{item.content}}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,26 +74,26 @@
 
 <script>
 import { mapState } from 'vuex'
-import { COMMIT, GET_SESSION, TRIM } from '../../utils'
-import _http from '../../http'
+import { COMMIT, PUSH, GET_SESSION, TRIM } from '../../utils';
 import { recentDate } from '../../utils/date.js'
+import _http from '../../http';
 import SOCKET from '../../utils/socket.js'
 
 export default {
     data() {
         return {
-            title: 'Room',
-            viewBox: null,
+            anotherInfo: null,
+            chat: [],
+            willChat: '',
             page: 1,
             timer: null,
-            willChat: '',
         };
     },
     created() {
-        this.init();
+        this.init()
     },
     mounted() {
-        this.initBind();
+        this.initBind()
     },
     methods: {
         /**
@@ -100,35 +103,17 @@ export default {
          */
         async init() {
             COMMIT('setBottom', false);
-            const { data } = await _http.getPublicChat({ page: this.page });
-            if (data.code === 1) {
-                COMMIT('setChat', data.record)
+            this.anotherInfo = JSON.parse(GET_SESSION('ANOTHER_USER_INFO'))
+            const { data } = await _http.getPrivateChat({ ...this.anotherInfo, page: this.page });
+            const { code, chat } = data;
+            if (code === 1) {
+                this.chat = chat
                 this.$nextTick(() => {
                     this.$refs.msgBox.scrollTop = this.$refs.msgBox.scrollHeight
                 })
             } else {
-                this.$toast.error('网络不佳，请刷新页面');
-                return
+                this.$toast.error('网络错误，请刷新后再试');
             }
-        },
-
-        /**
-         * Dom建立后绑定事件和socket
-         * @param {Null}
-         * @return {Null}
-         */
-        async initBind() {
-            const _this = this;
-            this.$refs.userMsg.onkeydown = event => event.keyCode === 13 ? _this.sendMessage() : null;
-            SOCKET.on('sendSuccess', async () => {
-                const { data } = await _http.getPublicChat({ page: 1 });
-                COMMIT('updatePublicChat', data.record)
-                this.$nextTick(() => {
-                    if (this.$refs.msgBox) {
-                        this.$refs.msgBox.scrollTop = this.$refs.msgBox.scrollHeight
-                    }
-                })
-            });
         },
 
         /**
@@ -137,7 +122,32 @@ export default {
          * @return {Null}
          */
         goBack() {
-            this.$router.goBack();
+            this.$router.goBack()
+        },
+
+        /**
+         * Dom建立后绑定事件和socket
+         * @param {Null}
+         * @return {Null}
+         */
+        async initBind() {
+            this.$refs.userMsg.onkeydown = event => event.keyCode === 13 ? this.sendMessage() : null;
+            SOCKET.on('Update_Private_Chat', async socketInfo => {
+                const currentInfo = JSON.parse(GET_SESSION('ANOTHER_USER_INFO'))
+                //发送socket请求的会话ID等于当前会话的ID时候才会请求聊天记录
+                if (currentInfo.chat_id == socketInfo.chat_id) {
+                    const { data } = await _http.getPrivateChat({ ...this.anotherInfo, page: this.page });
+                    if (data.code === 1) {
+                        this.chat = data.chat;
+                        this.$nextTick(() => {
+                            if (this.$refs.msgBox) {
+                                this.$refs.msgBox.scrollTop = this.$refs.msgBox.scrollHeight
+                            }
+                        })
+                    }
+                }
+            });
+
         },
 
         /**
@@ -152,15 +162,17 @@ export default {
                 this.willChat = '';
                 return
             }
-            const timeStamp = Number(new Date());
-            const { data } = await _http.sendPublicChat({ chatMessage: this.willChat });
+            const chatTimestamp = Number(new Date());
+            const { another_id, chat_id } = this.anotherInfo;
+            const { data } = await _http.sendPrivateChat({ content: this.willChat, another_id, chat_id, type: 'text' });
             const { code, msg } = data;
-            if (code !== 1) {
+            if (code === 1) {
+                this.willChat = '';
+                SOCKET.emit("Send_Private_Chat_Success", this.anotherInfo);
+            } else {
                 this.$toast.error(msg);
                 return
             }
-            this.willChat = '';
-            SOCKET.emit("chatUpdate", msg);
         },
 
         /**
@@ -172,15 +184,15 @@ export default {
             let { msgBox: wrap } = this.$refs;
             const oldScrollHeight = wrap.scrollHeight; //更新数据前容器的高度
             const bottom = oldScrollHeight - wrap.scrollTop - 547; //获取滚动条到底部的距离
-            if (wrap.scrollTop < 200) {
+            if (wrap.scrollTop < 20) {
                 if (this.timer) {
                     clearTimeout(this.timer);
                     this.timer = null;
                 }
                 this.timer = setTimeout(async () => {
                     this.page++;//页数+1
-                    const { data } = await _http.getPublicChat({ page: this.page });
-                    COMMIT('setChat', data.record)
+                    const { data } = await _http.getPrivateChat({ ...this.anotherInfo, page: this.page });
+                    this.chat = data.chat;
                     this.$nextTick(() => {
                         wrap.scrollTop = wrap.scrollHeight - oldScrollHeight
                     })
@@ -196,10 +208,31 @@ export default {
         changeDate(date, bool) {
             return recentDate(date, bool)
         }
+
     },
     computed: {
-        ...mapState(['publicChat', 'userInfo'])
+        addDateOfChat() {
+            const record = this.chat;
+            record[0]['needTime'] = true;
+            for (var i = 0; i < record.length; i++) {
+                if (i + 1 >= record.length) {
+                    break;
+                }
+                record[i + 1]['chatTimestamp'] - record[i]['chatTimestamp'] > 180000 ?
+                    (record[i + 1]['needTime'] = true) :
+                    (record[i + 1]['needTime'] = false);
+            }
+            return record;
+        }
     },
+    beforeRouteLeave(to, from, next) {
+        const answer = window.confirm('Do you really want to leave? you have unsaved changes!')
+        if (answer) {
+            next()
+        } else {
+            next(false)
+        }
+    }
 };
 </script>
 
@@ -343,9 +376,16 @@ export default {
     padding: 5px 7px;
     border-radius: 5px;
 }
-.loading {
-    width: 100%;
+.first_tip {
+    width: 220px;
     text-align: center;
-    position: absolute;
+    padding: 3px 0;
+    margin: 10px auto 0;
+    border-radius: 5px;
+    background: rgba(236, 233, 234, 0.8);
+}
+.room_name {
+    font-size: 16px;
+    color: #666;
 }
 </style>

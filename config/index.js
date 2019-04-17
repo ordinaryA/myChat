@@ -4,15 +4,12 @@
 
 const path = require('path')
 
-const assetsPublicPath = '/' //开发环境静态资源引用路径
-// const assetsPublicPath = './' //打包静态资源引用路径
-
 module.exports = {
   dev: {
 
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath,
+    assetsPublicPath: '/',
     proxyTable: {},
 
     // Various Dev Server settings
@@ -46,7 +43,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath,
+    assetsPublicPath: './',
 
     /**
      * Source Maps

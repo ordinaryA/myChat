@@ -2,7 +2,6 @@
     <div class="dise">
         <mu-appbar
             class="room_bar"
-            :title="title"
         >
             <mu-button
                 icon
@@ -11,7 +10,7 @@
             >
                 <mu-icon value=":iconfont icon-back" />
             </mu-button>
-            Room
+            <span class="room_name">That's All</span>
             <mu-button
                 icon
                 slot="right"
@@ -22,33 +21,28 @@
         <div
             class="msg_box"
             ref="msgBox"
+            @scroll.passive="loadData()"
         >
             <div
-                v-if="chat.length == 0"
-                class="first_tip"
-            >你们成为好友啦，快开始聊天吧</div>
-            <div v-else>
+                class="msg_one cl"
+                v-for="(item,i) in publicChat"
+                :key="i"
+            >
                 <div
-                    class="msg_one cl"
-                    v-for="(item,i) in addDateOfChat"
-                    :key="i"
+                    v-if="item.needTime"
+                    class="msg_time"
                 >
-                    <div
-                        v-if="item.needTime"
-                        class="msg_time"
+                    <span>{{changeDate(item.chatTimestamp,true)}}</span>
+                </div>
+                <mu-avatar :class="item.isSelf ? 'self_avatar' : 'other_avatar'">
+                    <img
+                        :src="`./static/avatar/${item.avatar}`"
+                        alt=""
                     >
-                        <span>{{changeDate(item.chatTimestamp,true)}}</span>
-                    </div>
-                    <mu-avatar :class="item.isSelf ? 'self_avatar' : 'other_avatar'">
-                        <img
-                            :src="`./static/avatar/${item.avatar}`"
-                            alt=""
-                        >
-                    </mu-avatar>
-                    <div>
-                        <div :class="item.isSelf ? 'self_title' : 'other_title'">{{item.nickname}}</div>
-                        <div :class="item.isSelf ? 'self_msg' : 'other_msg'">{{item.content}}</div>
-                    </div>
+                </mu-avatar>
+                <div>
+                    <div :class="item.isSelf ? 'self_title' : 'other_title'">{{item.nickname}}</div>
+                    <div :class="item.isSelf ? 'self_msg' : 'other_msg'">{{item.chatMessage}}</div>
                 </div>
             </div>
         </div>
@@ -76,25 +70,25 @@
 
 <script>
 import { mapState } from 'vuex'
-import { COMMIT, PUSH, GET_SESSION, TRIM } from '../../utils';
+import { COMMIT, GET_SESSION, TRIM } from '../../utils'
+import _http from '../../http'
 import { recentDate } from '../../utils/date.js'
-import _http from '../../http';
 import SOCKET from '../../utils/socket.js'
 
 export default {
     data() {
         return {
-            title: 'Room2',
-            anotherInfo: null,
-            chat: [],
+            viewBox: null,
+            page: 1,
+            timer: null,
             willChat: '',
         };
     },
     created() {
-        this.init()
+        this.init();
     },
     mounted() {
-        this.initBind()
+        this.initBind();
     },
     methods: {
         /**
@@ -104,27 +98,16 @@ export default {
          */
         async init() {
             COMMIT('setBottom', false);
-            this.anotherInfo = JSON.parse(GET_SESSION('ANOTHER_USER_INFO'))
-            const { data } = await _http.getPrivateChat(this.anotherInfo);
-            const { code, chat } = data;
-            if (code === 1) {
-                this.chat = chat
+            const { data } = await _http.getPublicChat({ page: this.page });
+            if (data.code === 1) {
+                COMMIT('setChat', data.record)
                 this.$nextTick(() => {
                     this.$refs.msgBox.scrollTop = this.$refs.msgBox.scrollHeight
                 })
             } else {
-                this.$toast.error('网络错误，请刷新后再试');
+                this.$toast.error('网络不佳，请刷新页面');
+                return
             }
-        },
-
-        /**
-         * 返回上一级
-         * @param {Null}
-         * @return {Null}
-         */
-        goBack() {
-            this.$router.goBack()
-            COMMIT('setBottom', true);
         },
 
         /**
@@ -133,23 +116,26 @@ export default {
          * @return {Null}
          */
         async initBind() {
-            this.$refs.userMsg.onkeydown = event => event.keyCode === 13 ? this.sendMessage() : null;
-            SOCKET.on('Update_Private_Chat', async socketInfo => {
-                const currentInfo = JSON.parse(GET_SESSION('ANOTHER_USER_INFO'))
-                //发送socket请求的会话ID等于当前会话的ID时候才会请求聊天记录
-                if (currentInfo.chat_id == socketInfo.chat_id) {
-                    const { data } = await _http.getPrivateChat(this.anotherInfo);
-                    if (data.code === 1) {
-                        this.chat = data.chat;
-                        this.$nextTick(() => {
-                            if (this.$refs.msgBox) {
-                                this.$refs.msgBox.scrollTop = this.$refs.msgBox.scrollHeight
-                            }
-                        })
+            const _this = this;
+            this.$refs.userMsg.onkeydown = event => event.keyCode === 13 ? _this.sendMessage() : null;
+            SOCKET.on('sendSuccess', async () => {
+                const { data } = await _http.getPublicChat({ page: 1 });
+                COMMIT('updatePublicChat', data.record)
+                this.$nextTick(() => {
+                    if (this.$refs.msgBox) {
+                        this.$refs.msgBox.scrollTop = this.$refs.msgBox.scrollHeight
                     }
-                }
+                })
             });
+        },
 
+        /**
+         * 返回上一级
+         * @param {Null}
+         * @return {Null}
+         */
+        goBack() {
+            this.$router.goBack();
         },
 
         /**
@@ -164,16 +150,39 @@ export default {
                 this.willChat = '';
                 return
             }
-            const chatTimestamp = Number(new Date());
-            const { another_id, chat_id } = this.anotherInfo;
-            const { data } = await _http.sendPrivateChat({ content: this.willChat, another_id, chat_id, type: 'text' });
+            const timeStamp = Number(new Date());
+            const { data } = await _http.sendPublicChat({ chatMessage: this.willChat });
             const { code, msg } = data;
-            if (code === 1) {
-                this.willChat = '';
-                SOCKET.emit("Send_Private_Chat_Success", this.anotherInfo);
-            } else {
+            if (code !== 1) {
                 this.$toast.error(msg);
                 return
+            }
+            this.willChat = '';
+            SOCKET.emit("chatUpdate", msg);
+        },
+
+        /**
+         * 下拉加载
+         * @param {Null}
+         * @return {Null}
+         */
+        loadData() {
+            let { msgBox: wrap } = this.$refs;
+            const oldScrollHeight = wrap.scrollHeight; //更新数据前容器的高度
+            const bottom = oldScrollHeight - wrap.scrollTop - 547; //获取滚动条到底部的距离
+            if (wrap.scrollTop < 200) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(async () => {
+                    this.page++;//页数+1
+                    const { data } = await _http.getPublicChat({ page: this.page });
+                    COMMIT('setChat', data.record)
+                    this.$nextTick(() => {
+                        wrap.scrollTop = wrap.scrollHeight - oldScrollHeight
+                    })
+                }, 100)
             }
         },
 
@@ -185,22 +194,9 @@ export default {
         changeDate(date, bool) {
             return recentDate(date, bool)
         }
-
     },
     computed: {
-        addDateOfChat() {
-            const record = this.chat;
-            record[0]['needTime'] = true;
-            for (var i = 0; i < record.length; i++) {
-                if (i + 1 >= record.length) {
-                    break;
-                }
-                record[i + 1]['chatTimestamp'] - record[i]['chatTimestamp'] > 180000 ?
-                    (record[i + 1]['needTime'] = true) :
-                    (record[i + 1]['needTime'] = false);
-            }
-            return record;
-        }
+        ...mapState(['publicChat', 'userInfo'])
     },
 };
 </script>
@@ -345,12 +341,9 @@ export default {
     padding: 5px 7px;
     border-radius: 5px;
 }
-.first_tip {
-    width: 220px;
+.loading {
+    width: 100%;
     text-align: center;
-    padding: 3px 0;
-    margin: 10px auto 0;
-    border-radius: 5px;
-    background: rgba(236, 233, 234, 0.8);
+    position: absolute;
 }
 </style>
