@@ -8,6 +8,8 @@
 ## 在线Demo
 -Mychat ：[http://www.almx.top/mychat](http://www.almx.top/mychat)
 
+![awesome](https://github.com/ordinaryA/snack/blob/master/supply/snack.png)
+
 ### v1.1.1 2019/4/15
 
 - 新增
