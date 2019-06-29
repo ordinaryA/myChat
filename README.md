@@ -8,7 +8,11 @@
 ## 在线Demo
 -Mychat ：[http://www.almx.top/mychat](http://www.almx.top/mychat)
 
-![awesome](https://github.com/ordinaryA/myChat/edit/master/supply/face1.png)![awesome](https://github.com/ordinaryA/myChat/edit/master/supply/face2.png)![awesome](https://github.com/ordinaryA/myChat/edit/master/supply/face3.png)![awesome](https://github.com/ordinaryA/myChat/edit/master/supply/face4.png)![awesome](https://github.com/ordinaryA/myChat/edit/master/supply/face5.png)
+![awesome](https://github.com/ordinaryA/myChat/edit/master/supply/face1.png)
+![awesome](https://github.com/ordinaryA/myChat/edit/master/supply/face2.png)
+![awesome](https://github.com/ordinaryA/myChat/edit/master/supply/face3.png)
+![awesome](https://github.com/ordinaryA/myChat/edit/master/supply/face4.png)
+![awesome](https://github.com/ordinaryA/myChat/edit/master/supply/face5.png)
 
 
 ### v1.1.1 2019/4/15
