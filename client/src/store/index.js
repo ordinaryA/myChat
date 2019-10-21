@@ -15,6 +15,7 @@ const store = new Vuex.Store({
     //Chat
     userInfo: '', //用户信息
     publicChat: '', //群聊
+    chatList: [], //用户聊天列表
     //friend
     searchUserList: [], //搜索用户列表
     friendApply: [], //收到好友申请
@@ -84,6 +85,9 @@ const store = new Vuex.Store({
       state.friendList = friendList;
       state.sendApply = sendApply;
     },
+    setChatList(state, chatList) {
+      state.chatList = chatList;
+    }
   },
   actions: {
     //查询用户好友
