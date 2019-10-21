@@ -2,10 +2,6 @@ import buildLogo from '../components/logo'
 import store from '../store'
 import router from '../router'
 
-const SET_TIME = (A, B) => setTimeout(() => A(), B)
-
-const SET_INT = (C, D) => setInterval(() => C(), D)
-
 const SET_SESSION = (E, F) => sessionStorage.setItem(E, F)
 const GET_SESSION = G => sessionStorage.getItem(G)
 const DEL_SESSION = K => sessionStorage.removeItem(K);
@@ -32,8 +28,6 @@ const TRIM = (s) => s.replace(/(^\s*)|(\s*$)/g, "");
 
 
 export {
-  SET_TIME,
-  SET_INT,
   SET_SESSION,
   GET_SESSION,
   DEL_SESSION,
