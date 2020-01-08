@@ -10,7 +10,6 @@ import {
 
 Install_Components(Vue)
 
-/* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
