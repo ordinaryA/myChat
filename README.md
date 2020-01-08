@@ -1,6 +1,6 @@
 # mychat
 
-##技术栈
+## 技术栈
 
 - 前台: vue-cli 脚手架 muse-ui 组件库
 - 后台: node.js koa2 框架 mysql 数据库
