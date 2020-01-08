@@ -1,10 +1,9 @@
-
 <template>
   <div class="com_layout">
-    <mu-appbar class="com_header">{{title}}</mu-appbar>
+    <mu-appbar class="com_header">{{ title }}</mu-appbar>
     <mu-list class="border_box h80">
       <mu-sub-header>群聊天</mu-sub-header>
-      <div v-for="(i,idx) in mockChat" :key="idx">
+      <div v-for="(i, idx) in mockChat" :key="idx">
         <mu-list-item avatar button class="list_one" :to="i.room">
           <mu-list-item-action>
             <mu-avatar>
@@ -12,8 +11,8 @@
             </mu-avatar>
           </mu-list-item-action>
           <mu-list-item-content>
-            <mu-list-item-title>{{i.title}}</mu-list-item-title>
-            <mu-list-item-sub-title>{{i.message}}</mu-list-item-sub-title>
+            <mu-list-item-title>{{ i.title }}</mu-list-item-title>
+            <mu-list-item-sub-title>{{ i.message }}</mu-list-item-sub-title>
           </mu-list-item-content>
           <mu-list-item-action>
             <mu-list-item-after-text>15 min</mu-list-item-after-text>
@@ -23,7 +22,9 @@
         <mu-divider inset />
       </div>
       <mu-sub-header>好友聊天</mu-sub-header>
-      <div v-if="chatList.length == 0" class="have_not_friend">暂无好友，请到通讯录页面添加好友♪(＾∀＾●)ﾉ</div>
+      <div v-if="chatList.length == 0" class="have_not_friend">
+        暂无好友，请到通讯录页面添加好友♪(＾∀＾●)ﾉ
+      </div>
       <div v-for="i in chatList" :key="i.id">
         <mu-list-item avatar button class="list_one" @click="goRoom2(i)">
           <mu-list-item-action>
@@ -32,11 +33,15 @@
             </mu-avatar>
           </mu-list-item-action>
           <mu-list-item-content>
-            <mu-list-item-title>{{i.nickname}}</mu-list-item-title>
-            <mu-list-item-sub-title>{{i.last_chat}}</mu-list-item-sub-title>
+            <mu-list-item-title>{{ i.nickname }}</mu-list-item-title>
+            <mu-list-item-sub-title>{{ i.last_chat }}</mu-list-item-sub-title>
           </mu-list-item-content>
           <mu-list-item-action v-if="i.unread != 0">
-            <mu-badge :content="String(i.unread)" color="secondary" circle></mu-badge>
+            <mu-badge
+              :content="String(i.unread)"
+              color="secondary"
+              circle
+            ></mu-badge>
           </mu-list-item-action>
         </mu-list-item>
         <mu-divider inset />

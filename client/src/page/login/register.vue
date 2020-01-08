@@ -2,7 +2,12 @@
   <div class="layout">
     <div class="register">
       <mu-form ref="form" :model="validateForm" class="com_form">
-        <mu-form-item label="用户名" label-float prop="username" :rules="usernameRules">
+        <mu-form-item
+          label="用户名"
+          label-float
+          prop="username"
+          :rules="usernameRules"
+        >
           <mu-text-field
             v-model="validateForm.username"
             prop="username"
@@ -26,7 +31,11 @@
           ></mu-text-field>
         </mu-form-item>
         <mu-form-item prop="isAgree" :rules="argeeRules">
-          <mu-checkbox label="同意用户协议" color="#000" v-model="validateForm.isAgree"></mu-checkbox>
+          <mu-checkbox
+            label="同意用户协议"
+            color="#000"
+            v-model="validateForm.isAgree"
+          ></mu-checkbox>
         </mu-form-item>
         <mu-form-item>
           <mu-button
@@ -36,7 +45,8 @@
             color="transparent"
             textColor="#000"
             @click="submit"
-          >确定注册</mu-button>
+            >确定注册</mu-button
+          >
         </mu-form-item>
       </mu-form>
     </div>
@@ -46,13 +56,7 @@
 <script>
 import { mapState } from "vuex";
 import buildLogo from "../../components/logo";
-import {
-  SET_LOGO,
-  DEL_LOGO,
-  COMMIT,
-  PUSH,
-  DISPATCH
-} from "../../utils";
+import { SET_LOGO, DEL_LOGO, COMMIT, PUSH, DISPATCH } from "../../utils";
 import _http from "../../http";
 
 export default {

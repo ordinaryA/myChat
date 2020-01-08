@@ -10,21 +10,31 @@
       </mu-button>
     </mu-appbar>
     <div class="msg_box" ref="msgBox" @scroll.passive="loadData()">
-      <div class="msg_one cl" v-for="(item,i) in publicChat" :key="i">
+      <div class="msg_one cl" v-for="(item, i) in publicChat" :key="i">
         <div v-if="item.needTime" class="msg_time">
-          <span>{{changeDate(item.chatTimestamp,true)}}</span>
+          <span>{{ changeDate(item.chatTimestamp, true) }}</span>
         </div>
         <mu-avatar :class="item.isSelf ? 'self_avatar' : 'other_avatar'">
           <img :src="`./static/avatar/${item.avatar}`" alt />
         </mu-avatar>
         <div>
-          <div :class="item.isSelf ? 'self_title' : 'other_title'">{{item.nickname}}</div>
-          <div :class="item.isSelf ? 'self_msg' : 'other_msg'">{{item.chatMessage}}</div>
+          <div :class="item.isSelf ? 'self_title' : 'other_title'">
+            {{ item.nickname }}
+          </div>
+          <div :class="item.isSelf ? 'self_msg' : 'other_msg'">
+            {{ item.chatMessage }}
+          </div>
         </div>
       </div>
     </div>
     <div class="enter_box">
-      <input class="input_box" type="text" ref="userMsg" v-model="willChat" maxlength="85" />
+      <input
+        class="input_box"
+        type="text"
+        ref="userMsg"
+        v-model="willChat"
+        maxlength="85"
+      />
       <mu-button class="sendBtn" color="primary" @click="sendMessage">
         发送
         <mu-icon right value="send"></mu-icon>

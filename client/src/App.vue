@@ -6,7 +6,7 @@
       <mu-paper class="this_paper" :z-depth="5">
         <mu-bottom-nav :value="navDefult">
           <mu-bottom-nav-item
-            v-for="(item,index) in navList"
+            v-for="(item, index) in navList"
             :key="index"
             :value="item.value"
             :title="item.title"

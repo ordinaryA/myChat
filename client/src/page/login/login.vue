@@ -2,7 +2,12 @@
   <div class="layout">
     <div class="register">
       <mu-form ref="form" :model="validateForm" class="com_form">
-        <mu-form-item label="用户名" label-float prop="username" :rules="usernameRules">
+        <mu-form-item
+          label="用户名"
+          label-float
+          prop="username"
+          :rules="usernameRules"
+        >
           <mu-text-field
             v-model="validateForm.username"
             prop="username"
@@ -33,7 +38,8 @@
             color="transparent"
             textColor="#000"
             @click="loginSubmit"
-          >登录</mu-button>
+            >登录</mu-button
+          >
         </mu-form-item>
         <mu-form-item>
           <mu-button
@@ -42,8 +48,15 @@
             color="transparent"
             textColor="#000"
             class="form_sm_button"
-          >注册用户</mu-button>
-          <mu-button flat color="transparent" textColor="#000" class="form_sm_button">忘记密码</mu-button>
+            >注册用户</mu-button
+          >
+          <mu-button
+            flat
+            color="transparent"
+            textColor="#000"
+            class="form_sm_button"
+            >忘记密码</mu-button
+          >
         </mu-form-item>
       </mu-form>
     </div>

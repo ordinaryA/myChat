@@ -28,79 +28,79 @@ Vue.use(Router)
 
 const router = new Router({
   routes: [{
-      path: '/',
-      component: ChatBase,
-      children: [{
-          path: '',
-          name: 'chat',
-          component: Chat
-        },
-        {
-          path: '/room',
-          name: 'room',
-          component: Room
-        },
-        {
-          path: '/room2',
-          name: 'room2',
-          component: Room2
-        }
-      ]
+    path: '/',
+    component: ChatBase,
+    children: [{
+      path: '',
+      name: 'chat',
+      component: Chat
     },
     {
-      path: '/friend',
-      component: FriendBase,
-      children: [{
-          path: '',
-          name: 'friend',
-          component: Friend
-        },
-        {
-          path: '/friendInfo',
-          name: 'friendInfo',
-          component: FriendInfo,
-        }
-      ]
+      path: '/room',
+      name: 'room',
+      component: Room
     },
     {
-      path: '/find',
-      name: 'find',
-      component: Find
+      path: '/room2',
+      name: 'room2',
+      component: Room2
+    }
+    ]
+  },
+  {
+    path: '/friend',
+    component: FriendBase,
+    children: [{
+      path: '',
+      name: 'friend',
+      component: Friend
     },
     {
-      path: '/myBase',
-      component: Mybase,
-      children: [{
-          path: '',
-          name: 'mine',
-          component: Mine,
-        },
-        {
-          path: '/setPage',
-          name: 'setPage',
-          component: SetPage,
-        }
-      ]
+      path: '/friendInfo',
+      name: 'friendInfo',
+      component: FriendInfo,
+    }
+    ]
+  },
+  {
+    path: '/find',
+    name: 'find',
+    component: Find
+  },
+  {
+    path: '/myBase',
+    component: Mybase,
+    children: [{
+      path: '',
+      name: 'mine',
+      component: Mine,
     },
     {
-      path: '/login',
-      component: LoginBase,
-      children: [{
-          path: '',
-          name: 'login',
-          component: Login,
-        },
-        {
-          path: '/register',
-          name: 'register',
-          component: Register,
-        },
-      ]
+      path: '/setPage',
+      name: 'setPage',
+      component: SetPage,
+    }
+    ]
+  },
+  {
+    path: '/login',
+    component: LoginBase,
+    children: [{
+      path: '',
+      name: 'login',
+      component: Login,
     },
     {
-      path: '**', // 错误路由
-      redirect: '/' //重定向
+      path: '/register',
+      name: 'register',
+      component: Register,
     },
+    ]
+  },
+  {
+    path: '**', // 错误路由
+    redirect: '/' //重定向
+  },
   ]
 })
 import STORE from '../store'

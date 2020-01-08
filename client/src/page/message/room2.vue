@@ -4,30 +4,42 @@
       <mu-button icon slot="left" @click="goBack">
         <mu-icon value=":iconfont icon-back" />
       </mu-button>
-      <span class="room_name">{{anotherInfo.nickname}}</span>
+      <span class="room_name">{{ anotherInfo.nickname }}</span>
       <mu-button icon slot="right">
         <mu-icon value=":iconfont icon-more" />
       </mu-button>
     </mu-appbar>
     <div class="msg_box" ref="msgBox" @scroll.passive="loadData()">
-      <div v-if="chat.length == 0" class="first_tip">你们成为好友啦，快开始聊天吧</div>
+      <div v-if="chat.length == 0" class="first_tip">
+        你们成为好友啦，快开始聊天吧
+      </div>
       <div v-else>
-        <div class="msg_one cl" v-for="(item,i) in addDateOfChat" :key="i">
+        <div class="msg_one cl" v-for="(item, i) in addDateOfChat" :key="i">
           <div v-if="item.needTime" class="msg_time">
-            <span>{{changeDate(item.chatTimestamp,true)}}</span>
+            <span>{{ changeDate(item.chatTimestamp, true) }}</span>
           </div>
           <mu-avatar :class="item.isSelf ? 'self_avatar' : 'other_avatar'">
             <img :src="`./static/avatar/${item.avatar}`" alt />
           </mu-avatar>
           <div>
-            <div :class="item.isSelf ? 'self_title' : 'other_title'">{{item.nickname}}</div>
-            <div :class="item.isSelf ? 'self_msg' : 'other_msg'">{{item.content}}</div>
+            <div :class="item.isSelf ? 'self_title' : 'other_title'">
+              {{ item.nickname }}
+            </div>
+            <div :class="item.isSelf ? 'self_msg' : 'other_msg'">
+              {{ item.content }}
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div class="enter_box">
-      <input class="input_box" type="text" ref="userMsg" v-model="willChat" maxlength="85" />
+      <input
+        class="input_box"
+        type="text"
+        ref="userMsg"
+        v-model="willChat"
+        maxlength="85"
+      />
       <mu-button class="sendBtn" color="primary" @click="sendMessage">
         发送
         <mu-icon right value="send"></mu-icon>

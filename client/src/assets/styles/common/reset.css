@@ -171,7 +171,7 @@ body {
 }
 
 input {
-  outline: none
+  outline: none;
 }
 
 .cl {
@@ -194,6 +194,5 @@ input {
   fill: currentColor;
   overflow: hidden;
 }
-
 
 /* ::-webkit-scrollbar{width:0px} */
