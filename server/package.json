@@ -11,7 +11,7 @@
     "node": ">= 0.10.0"
   },
   "dependencies": {
-    "async": "0.2.9",
+    "async": "2.6.4",
     "chinese-random-name": "^1.0.0",
     "jsonwebtoken": "^8.1.0",
     "koa": "^2.3.0",
