@@ -13,7 +13,7 @@
   "dependencies": {
     "async": "0.2.9",
     "chinese-random-name": "^1.0.0",
-    "jsonwebtoken": "^8.1.0",
+    "jsonwebtoken": "^9.0.0",
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
     "koa-cors": "0.0.16",
